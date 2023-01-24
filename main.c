@@ -85,14 +85,14 @@ static void hal_low_power_io_init(void)
         //TSOP6252 10 IO
         {GPIO_P02,   GPIO_FLOATING   },/*SWD*/
         {GPIO_P03,   GPIO_FLOATING   },/*SWD*/
-        {GPIO_P09,   GPIO_PULL_UP    },/*UART TX*/
-        {GPIO_P10,   GPIO_PULL_UP    },/*UART RX*/
-        {GPIO_P11,   GPIO_PULL_DOWN  },
-        {GPIO_P14,   GPIO_PULL_DOWN  },
-        {GPIO_P15,   GPIO_PULL_DOWN  },
+        {GPIO_P09,   GPIO_FLOATING   },/*UART TX*/
+        {GPIO_P10,   GPIO_FLOATING   },/*UART RX*/
+        {GPIO_P11,   GPIO_FLOATING   },
+        {GPIO_P14,   GPIO_FLOATING   },
+        {GPIO_P15,   GPIO_FLOATING   },
         {GPIO_P16,   GPIO_FLOATING   },
-        {GPIO_P18,   GPIO_PULL_DOWN  },
-        {GPIO_P20,   GPIO_PULL_DOWN  },
+        {GPIO_P18,   GPIO_FLOATING   },
+        {GPIO_P20,   GPIO_FLOATING   },
         #if(SDK_VER_CHIP==__DEF_CHIP_QFN32__)
         //6222 23 IO
         {GPIO_P00,   GPIO_PULL_DOWN  },
