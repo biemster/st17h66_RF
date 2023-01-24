@@ -123,8 +123,7 @@ static void hal_low_power_io_init(void)
     DCDC_CONFIG_SETTING(0x0a);
     DCDC_REF_CLK_SETTING(1);
     DIG_LDO_CURRENT_SETTING(0x01);
-    //hal_pwrmgr_RAM_retention(RET_SRAM0|RET_SRAM1|RET_SRAM2);
-    hal_pwrmgr_RAM_retention(RET_SRAM0);
+    hal_pwrmgr_RAM_retention(0x00);
     hal_pwrmgr_RAM_retention_set();
     hal_pwrmgr_LowCurrentLdo_enable();
 }
