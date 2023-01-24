@@ -10,7 +10,6 @@
 #include "pwrmgr.h"
 #include "error.h"
 #include "gpio.h"
-#include "log.h"
 #include "clock.h"
 #include "jump_function.h"
 #include "flash.h"
@@ -151,7 +150,6 @@ int hal_pwrmgr_lock(MODULE_e mod)
         {
             mCtx[i].lock = TRUE;
             disableSleep();
-            //LOG("LOCK\n");
             ret = PPlus_SUCCESS;
             break;
         }
@@ -193,7 +191,6 @@ int hal_pwrmgr_unlock(MODULE_e mod)
         disableSleep();
 
     HAL_EXIT_CRITICAL_SECTION();
-    //LOG("sleep mode:%d\n", isSleepAllow());
     return PPlus_SUCCESS;
 }
 
@@ -291,7 +288,6 @@ int __attribute__((used)) hal_pwrmgr_sleep_process(void)
     //20181013 ZQ :
     hal_pwrmgr_RAM_retention_set();
 
-    //LOG("Sleep\n");
     for(i = 0; i< HAL_PWRMGR_TASK_MAX_NUM; i++)
     {
         if(mCtx[i].moudle_id == MOD_NONE)

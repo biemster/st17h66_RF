@@ -151,7 +151,6 @@ CHIP_ID_STATUS_e LL_PLUS_LoadMACFromChipMAddr(void);
 
 
 void check_chip_mAddr(void);
-void LOG_CHIP_MADDR(void);
 
 
 #endif

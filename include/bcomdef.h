@@ -30,11 +30,6 @@ extern "C"
 #include "rom_sym_def.h"
 
 #include "comdef.h"
-#include "log.h"
-
-//#define LOG_DEBUG(...)
-//#define LOG(...)
-//#define OM_LOG(...)
 /*********************************************************************
     CONSTANTS
 */

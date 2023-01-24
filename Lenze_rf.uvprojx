@@ -409,11 +409,6 @@
           <GroupName>driver</GroupName>
           <Files>
             <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\components\uart.c</FilePath>
-            </File>
-            <File>
               <FileName>clock.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\components\clock.c</FilePath>
@@ -432,11 +427,6 @@
               <FileName>pwrmgr.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\components\pwrmgr.c</FilePath>
-            </File>
-            <File>
-              <FileName>my_printf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\components\my_printf.c</FilePath>
             </File>
             <File>
               <FileName>flash.c</FileName>

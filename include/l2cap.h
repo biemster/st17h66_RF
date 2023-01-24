@@ -26,8 +26,6 @@ extern "C"
  */
 #include "bcomdef.h"
 #include "OSAL.h"
-
-#include "log.h"
 /*********************************************************************
     CONSTANTS
 */

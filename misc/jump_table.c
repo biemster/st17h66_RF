@@ -23,8 +23,6 @@
 #include "pwrmgr.h"
 #include "gpio.h"
 #include "timer.h"
-#include "uart.h"
-#include "log.h"
 
 /*******************************************************************************
     MACROS
@@ -34,27 +32,6 @@ void (*trap_c_callback)(void);
 extern void log_printf(const char* format, ...);
 void _hard_fault(uint32_t* arg)
 {
-    uint32_t* stk = (uint32_t*)((uint32_t)arg);
-    log_printf("[Hard fault handler]\n");
-//    log_printf("R0   = 0x%08x\n", stk[9]);
-//    log_printf("R1   = 0x%08x\n", stk[10]);
-//    log_printf("R2   = 0x%08x\n", stk[11]);
-//    log_printf("R3   = 0x%08x\n", stk[12]);
-//    log_printf("R4   = 0x%08x\n", stk[1]);
-//    log_printf("R5   = 0x%08x\n", stk[2]);
-//    log_printf("R6   = 0x%08x\n", stk[3]);
-//    log_printf("R7   = 0x%08x\n", stk[4]);
-//    log_printf("R8   = 0x%08x\n", stk[5]);
-//    log_printf("R9   = 0x%08x\n", stk[6]);
-//    log_printf("R10  = 0x%08x\n", stk[7]);
-//    log_printf("R11  = 0x%08x\n", stk[8]);
-//    log_printf("R12  = 0x%08x\n", stk[13]);
-//    log_printf("SP   = 0x%08x\n", stk[0]);
-    log_printf("LR   = 0x%08x\n", stk[14]);
-    log_printf("PC   = 0x%08x\n", stk[15]);
-    log_printf("PSR  = 0x%08x\n", stk[16]);
-    log_printf("ICSR = 0x%08x\n", *(volatile uint32_t*)0xE000ED04);
-
     if (trap_c_callback)
     {
         trap_c_callback();
@@ -121,7 +98,7 @@ const uint32_t* const jump_table_base[256] __attribute__((section("jump_table_me
     (const uint32_t*)hard_fault, 0, 0, 0, 0, 0, 0, 0,           // 220 - 227
     0, 0,       // 228 - 229
     0, 0, 0, 0, 0,  // 230 - 234
-    (const uint32_t*)hal_UART0_IRQHandler,      // 235 uart irq handler
+    0,      // 235 uart irq handler
     0, 0, 0, 0, 0,    // 236 - 240
     0, 0, 0, 0, 0, 0, 0, 0, 0,     // 241 - 249, for ISR entry
     0, 0, 0, 0, 0, 0                  // 250 - 255, for ISR entry

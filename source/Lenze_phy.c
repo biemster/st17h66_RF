@@ -47,7 +47,6 @@
 #include "global_config.h"
 #include "OSAL.h"
 #include "OSAL_PwrMgr.h"
-#include "log.h"
 #include "timer.h"
 #include "Lenze_phy.h"
 #include "ll.h"
@@ -177,12 +176,6 @@ void phy_set_channel(uint8 rfChnIdx)
 
 void phy_hw_go(void)
 {
-    //20190115 ZQ recorded ll re-trigger
-    if(llWaitingIrq==TRUE)
-    {
-        LOG("[PHY TRIG ERR]\n");
-    }
-
     *(volatile uint32_t*)(LL_HW_BASE+ 0x14) = LL_HW_IRQ_MASK;   //clr  irq status
     *(volatile uint32_t*)(LL_HW_BASE+ 0x0c) = 0x0001;           //mask irq :only use mode done
     *(volatile uint32_t*)(LL_HW_BASE+ 0x00) = 0x0001;           //trig
@@ -216,7 +209,6 @@ void phy_hw_stop(void)
 
         if(cnt>10)
         {
-            LOG("[PHY STOP ERR]\n");
             break;
         }
     };
@@ -304,6 +296,7 @@ void phy_rf_tx(void)
     llWaitingIrq=TRUE;
     HAL_EXIT_CRITICAL_SECTION();
 }
+
 void phy_rf_rx(void)
 {
     phy_hw_stop();
@@ -319,6 +312,7 @@ void phy_rf_rx(void)
     llWaitingIrq=TRUE;
     HAL_EXIT_CRITICAL_SECTION();
 }
+
 void phy_rx_data_process(void)
 {
     uint8_t pduLen=0;
@@ -329,17 +323,7 @@ void phy_rx_data_process(void)
     }
     else
     {
-        pduLen=phyBufRx[1];
-    }
-
-    {
-        LOG("-------------------------\n");
-        LOG("[PHY RX] [-%03ddbm %4dKHz %02d CH] ",phyRssi,phyFoff-512,s_phy.rfChn);
-
-        for(uint8_t i=0; i<pduLen; i++)
-            LOG("%02x ",phyBufRx[i]);
-
-        LOG("\n");
+        pduLen = phyBufRx[1];
     }
 }
 
@@ -348,13 +332,6 @@ void phy_tx_buf_updata(uint8_t* adva,uint8_t* txHead,uint8_t* txPayload,uint8_t 
     osal_memcpy(&(phyBufTx[0]),&(txHead[0]),2);          //copy tx header
     osal_memcpy(&(phyBufTx[2]),&(adva[0]),6);              //copy AdvA
     osal_memcpy(&(phyBufTx[8]),&(txPayload[0]),dlen);      //copy payload
-    LOG("\n-----------------------------------------------\n");
-    LOG("PHY BUF Tx Dump\n");
-
-    for(uint8_t i=0; i<phyBufTx[1]+2; i++)
-        LOG("%02x ",phyBufTx[i]);
-
-    LOG("\n-----------------------------------------------\n");
 }
 
 
@@ -392,15 +369,11 @@ void PLUSPHY_IRQHandler(void)
     mode = ll_hw_get_tr_mode();
 
     // ===================   mode TRX process 1
-    if (mode == LL_HW_MODE_STX  &&
-            (s_phy.Status == PHYPLUS_RFPHY_TX_ONLY)
-       )
+    if (mode == LL_HW_MODE_STX && (s_phy.Status == PHYPLUS_RFPHY_TX_ONLY))
     {
         osal_set_event(LenzePhy_TaskID,PPP_TX_DONE_EVT);
     }
-    else if(mode == LL_HW_MODE_SRX  &&
-            (s_phy.Status == PHYPLUS_RFPHY_RX_ONLY)
-           )
+    else if(mode == LL_HW_MODE_SRX && (s_phy.Status == PHYPLUS_RFPHY_RX_ONLY))
     {
         rf_phy_get_pktFoot(&phyRssi,&phyFoff,&phyCarrSens);
 
@@ -410,9 +383,8 @@ void PLUSPHY_IRQHandler(void)
             {
                 uint16_t pktLen;
                 uint32_t pktFoot0, pktFoot1;
-                ll_hw_read_rfifo_pplus(phyBufRx, &pktLen,&pktFoot0,&pktFoot1);
-                rf_phy_get_pktFoot_fromPkt(pktFoot0,pktFoot1,
-                                           &phyRssi,&phyFoff,&phyCarrSens);
+                ll_hw_read_rfifo_pplus(phyBufRx, &pktLen,&pktFoot0, &pktFoot1);
+                rf_phy_get_pktFoot_fromPkt(pktFoot0,pktFoot1, &phyRssi,&phyFoff,&phyCarrSens);
                 phy_rx_data_check();
             }
         }
@@ -422,9 +394,8 @@ void PLUSPHY_IRQHandler(void)
             {
                 uint16_t pktLen;
                 uint32_t pktFoot0, pktFoot1;
-                ll_hw_read_rfifo(phyBufRx, &pktLen,&pktFoot0,&pktFoot1);
-                rf_phy_get_pktFoot_fromPkt(pktFoot0,pktFoot1,
-                                           &phyRssi,&phyFoff,&phyCarrSens);
+                ll_hw_read_rfifo(phyBufRx, &pktLen,&pktFoot0, &pktFoot1);
+                rf_phy_get_pktFoot_fromPkt(pktFoot0,pktFoot1, &phyRssi,&phyFoff,&phyCarrSens);
                 phy_rx_data_check();
             }
         }
@@ -488,16 +459,16 @@ void LenzePhy_Init(uint8 task_id)
 {
     LenzePhy_TaskID = task_id;
     //set phy irq handeler
-    JUMP_FUNCTION(V4_IRQ_HANDLER)                   =   (uint32_t)&PLUSPHY_IRQHandler;
+    JUMP_FUNCTION(V4_IRQ_HANDLER) = (uint32_t)&PLUSPHY_IRQHandler;
     // read flash driectly becasue HW has do the address mapping for read Flash operation
     uint8_t p[6];
     hal_flash_read(0x11004000,p,6);
-    s_pubAddr[3] = p[0];
-    s_pubAddr[2] = p[1];
-    s_pubAddr[1] = p[2];
-    s_pubAddr[0] = p[3];
-    s_pubAddr[5] = p[4];
-    s_pubAddr[4] = p[5];
+    s_pubAddr[5] = 0x11;
+    s_pubAddr[4] = 0x22;
+    s_pubAddr[3] = 0x33;
+    s_pubAddr[2] = 0x44;
+    s_pubAddr[1] = 0x55;
+    s_pubAddr[0] = 0x66;
 
     //init tx buf
     for(uint8_t i=0; i<255; i++)
@@ -543,7 +514,7 @@ void LenzePhy_Init(uint8 task_id)
     }
     //phy pktfmt config
     s_phy.Status        =   PHYPLUS_RFPHY_IDLE;
-    s_phy.txIntv        =   100;//ms
+    s_phy.txIntv        =   5000;//ms
     s_phy.rxIntv        =   200;//ms
     s_phy.rxAckTO       =   500;//us
     s_phy.rxOnlyTO      =   10*1000;//us
@@ -556,8 +527,6 @@ void LenzePhy_Init(uint8 task_id)
     s_pktCfg.syncWord   =   DEFAULT_SYNCWORD;
     VOID osal_start_timerEx(LenzePhy_TaskID, PPP_PERIODIC_TX_EVT, 1000);
     VOID osal_start_timerEx(LenzePhy_TaskID, PPP_PERIODIC_RX_EVT, 2500);
-    LOG("[PHY] init done %d rfchn%d SW[%8x] CRC[%d %8x] WT[%2x]\n"\
-        ,s_phy.Status,s_phy.rfChn,s_pktCfg.syncWord,s_pktCfg.crcFmt, s_pktCfg.crcSeed,s_pktCfg.wtSeed);
 }
 
 
@@ -650,7 +619,6 @@ uint16 LenzePhy_ProcessEvent(uint8 task_id, uint16 events)
         }
         else
         {
-            LOG("SKIP TX_EVT Current Stats %d\n",s_phy.Status);
             osal_start_timerEx(LenzePhy_TaskID,PPP_PERIODIC_TX_EVT,20);
         }
 
@@ -670,7 +638,6 @@ uint16 LenzePhy_ProcessEvent(uint8 task_id, uint16 events)
         }
         else
         {
-            LOG("SKIP RX_EVT Current Stats %d\n",s_phy.Status);
             osal_start_timerEx(LenzePhy_TaskID,PPP_PERIODIC_RX_EVT,20);
         }
 

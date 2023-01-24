@@ -16,7 +16,6 @@
 #include <string.h>
 #include "types.h"
 #include "flash.h"
-#include "log.h"
 #include "pwrmgr.h"
 #include "error.h"
 
@@ -484,34 +483,3 @@ void check_chip_mAddr(void)
     }
     g_chipMAddr.chipMAddrStatus=read_chip_mAddr();
 }
-
-void LOG_CHIP_MADDR(void)
-{
-    
-    LOG("\n");
-    if(g_chipMAddr.chipMAddrStatus==CHIP_ID_EMPTY)
-    {
-        LOG("[CHIP_MADDR EMPTY]\n");
-    }
-    else if(g_chipMAddr.chipMAddrStatus==CHIP_ID_INVALID)
-    {
-        LOG("[CHIP_MADDR INVALID]\n");
-    }
-    else if(g_chipMAddr.chipMAddrStatus==CHIP_ID_VALID)
-    {
-
-        LOG("[CHIP_MADDR VALID]\n");
-        for(int i=0;i<CHIP_MADDR_LEN;i++)
-        {
-            LOG("%02x",g_chipMAddr.mAddr[i]);
-        }
-        LOG("\n");
-
-    }
-    else
-    {
-        LOG("[CHIP_MADDR UNCHECKED]\n");
-    }
-}
-
-

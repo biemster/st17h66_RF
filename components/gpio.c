@@ -20,7 +20,6 @@
 #include "pwrmgr.h"
 #include "error.h"
 #include "jump_function.h"
-#include "log.h"
 
 
 extern uint32_t s_gpio_wakeup_src_group1,s_gpio_wakeup_src_group2;
@@ -405,11 +404,11 @@ static void hal_gpioin_event_pin(gpio_pin_e pin, gpio_polarity_e type)
 
     if (p_irq_ctx[pin].posedgeHdl && (type == POL_RISING ))
     {
-        p_irq_ctx[pin].posedgeHdl(pin,POL_RISING );//LOG("POS\n");
+        p_irq_ctx[pin].posedgeHdl(pin,POL_RISING );
     }
     else if (p_irq_ctx[pin].negedgeHdl && (type == POL_FALLING))
     {
-        p_irq_ctx[pin].negedgeHdl(pin,POL_FALLING);//LOG("NEG\n");
+        p_irq_ctx[pin].negedgeHdl(pin,POL_FALLING);
     }
 }
 
@@ -426,7 +425,6 @@ static void hal_gpioin_event(uint32 int_status, uint32 polarity)
 {
     int i;
     gpioin_Ctx_t* p_irq_ctx = &(m_gpioCtx.irq_ctx[0]);
-//    LOG("GI:%x,%x\n",int_status,polarity);
 
     for (i = 0; i < NUMBER_OF_PINS; i++)
     {

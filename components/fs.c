@@ -17,14 +17,6 @@
 #include "fs.h"
 #include "flash.h"
 #include "error.h"
-#include "log.h"
-
-//#define FS_DBBUG
-#ifdef FS_DBBUG
-    #define FS_LOG  LOG
-#else
-    #define FS_LOG(...)
-#endif
 
 
 static uint8_t  fs_sector_num;
@@ -391,15 +383,10 @@ static int fs_init(void)
     fs.cfg.item_len = FS_ITEM_LEN;
     osal_memset((fs.cfg.reserved),0xff,(FS_ITEM_LEN-7)*sizeof(uint8_t));
     osal_memset((sector_order),0x00,FS_SECTOR_NUM_BUFFER_SIZE);
-    FS_LOG("fs_init:\n");
 
     for(i = 0; i < fs.cfg.sector_num; i++)
     {
         fs_spif_read(FS_ABSOLUTE_ADDR(4096*i),(uint8_t*)(&flash_rd_cfg),sizeof(fs_cfg_t));
-        FS_LOG("flash_rd_cfg.sector_addr:%x\n",flash_rd_cfg.sector_addr);
-        FS_LOG("flash_rd_cfg.sector_num:%x\n",flash_rd_cfg.sector_num);
-        FS_LOG("flash_rd_cfg.item_len:%x\n",flash_rd_cfg.item_len);
-        FS_LOG("flash_rd_cfg.index:%x\n",flash_rd_cfg.index);
 
         if((flash_rd_cfg.sector_addr == fs.cfg.sector_addr) &&
                 (flash_rd_cfg.sector_num == fs.cfg.sector_num) &&
@@ -410,12 +397,10 @@ static int fs_init(void)
                 if(i == flash_rd_cfg.index)
                 {
                     flash = FLASH_ORIGINAL_ORDER;
-                    FS_LOG("FLASH_ORIGINAL_ORDER\n");
                 }
                 else
                 {
                     flash = FLASH_NEW_ORDER;
-                    FS_LOG("FLASH_NEW_ORDER\n");
                 }
 
                 sector_order[i] = flash_rd_cfg.index;
@@ -424,7 +409,6 @@ static int fs_init(void)
             else
             {
                 flash = FLASH_CONTEXT_ERROR;
-                FS_LOG("FLASH_CONTEXT_ERROR1\n");
                 break;
             }
         }
@@ -437,7 +421,6 @@ static int fs_init(void)
         else
         {
             flash = FLASH_CONTEXT_ERROR;
-            FS_LOG("FLASH_CONTEXT_ERROR2\n");
             break;
         }
     }
@@ -458,7 +441,6 @@ static int fs_init(void)
 
             if(PPlus_SUCCESS != fs_spif_write((FS_ABSOLUTE_ADDR(4096*i)),(uint8_t*)(&(fs.cfg)),sizeof(fs_cfg_t)))
             {
-                FS_LOG("PPlus_ERR_FS_WRITE_FAILED\n");
                 return PPlus_ERR_FS_WRITE_FAILED;
             }
         }
@@ -484,13 +466,11 @@ static int fs_init(void)
 
             if((ret != PPlus_ERR_FS_FULL) && (ret != PPlus_SUCCESS))
             {
-                FS_LOG("PPlus_ERR_FS_RESERVED_ERROR\n");
                 return PPlus_ERR_FS_RESERVED_ERROR;
             }
         }
     }
 
-    FS_LOG("PPlus_SUCCESS\n");
     return PPlus_SUCCESS;
 }
 

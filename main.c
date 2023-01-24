@@ -38,7 +38,6 @@
 #include "pwrmgr.h"
 #include "mcu.h"
 #include "gpio.h"
-#include "log.h"
 #include "rf_phy_driver.h"
 #include "flash.h"
 #include "version.h"
@@ -57,6 +56,13 @@
 extern void init_config(void);
 extern int app_main(void);
 extern void hal_rom_boot_init(void);
+
+
+// NOPs for rf_phy_driver.o in rf.lib (should be removed in issue #3)
+void dbg_printf_init(void) {}
+void dbg_printf(const char* format, ...) {}
+typedef enum{UART0=0,UART1=1,} UART_INDEX_e;
+int hal_uart_send_byte(UART_INDEX_e uart_index, unsigned char data) {return 0;}
 
 /*********************************************************************
     OSAL LARGE HEAP CONFIG
@@ -161,7 +167,6 @@ static void hal_init(void)
         .rd_instr       =   XFRD_FCMD_READ_DUAL
     };
     hal_spif_cache_init(cfg);
-    LOG_INIT();
     hal_gpio_init();
 }
 
@@ -178,8 +183,6 @@ int  main(void)
     #if(_BUILD_FOR_DTM_==1)
     rf_phy_direct_test();
     #endif
-    LOG("SDK Version ID %08x \n",SDK_VER_RELEASE_ID);
-    LOG("rfClk %d rcClk %d sysClk %d tpCap[%02x %02x]\n",g_rfPhyClkSel,g_clk32K_config,g_system_clk,g_rfPhyTpCal0,g_rfPhyTpCal1);
     app_main();
 }
 
