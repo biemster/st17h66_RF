@@ -526,7 +526,7 @@ void LenzePhy_Init(uint8 task_id)
     s_pktCfg.wtSeed     =   WHITEN_SEED_CH37;//DEFAULT_WHITEN_SEED;
     s_pktCfg.syncWord   =   DEFAULT_SYNCWORD;
     VOID osal_start_timerEx(LenzePhy_TaskID, PPP_PERIODIC_TX_EVT, 1000);
-    VOID osal_start_timerEx(LenzePhy_TaskID, PPP_PERIODIC_RX_EVT, 2500);
+    //VOID osal_start_timerEx(LenzePhy_TaskID, PPP_PERIODIC_RX_EVT, 2500);
 }
 
 
