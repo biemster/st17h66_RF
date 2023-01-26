@@ -454,9 +454,19 @@
           <GroupName>lib</GroupName>
           <Files>
             <File>
-              <FileName>rf.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>.\lib\rf.lib</FilePath>
+              <FileName>rf_phy_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lib\rf_phy_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>patch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lib\patch.c</FilePath>
+            </File>
+            <File>
+              <FileName>phy_sec_ext.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lib\phy_sec_ext.c</FilePath>
             </File>
           </Files>
         </Group>

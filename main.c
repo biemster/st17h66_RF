@@ -58,12 +58,6 @@ extern int app_main(void);
 extern void hal_rom_boot_init(void);
 
 
-// NOPs for rf_phy_driver.o in rf.lib (should be removed in issue #3)
-void dbg_printf_init(void) {}
-void dbg_printf(const char* format, ...) {}
-typedef enum{UART0=0,UART1=1,} UART_INDEX_e;
-int hal_uart_send_byte(UART_INDEX_e uart_index, unsigned char data) {return 0;}
-
 /*********************************************************************
     OSAL LARGE HEAP CONFIG
 */
