@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-
+#include "mcu_phy_bumbee.h"
 #include "bus_dev.h"
 #include "gpio.h"
 

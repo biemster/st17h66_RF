@@ -8,8 +8,11 @@
 extern "C" {
 #endif
 
-#include "types.h"
 #include "bus_dev.h"
+#include "core_bumbee_m0.h"
+#include "core_cm0.h"
+#include "mcu_phy_bumbee.h"
+#include "types.h"
 
 #define FREE_TIMER_NUMBER 2
 

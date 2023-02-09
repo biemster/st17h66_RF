@@ -29,7 +29,6 @@
 */
 void (*trap_c_callback)(void);
 
-extern void log_printf(const char* format, ...);
 void _hard_fault(uint32_t* arg)
 {
     if (trap_c_callback)
@@ -54,7 +53,7 @@ void hard_fault(void)
 // item 1 - 4 for OSAL task entry
 // item 224 - 255 for ISR(Interrupt Service Routine) entry
 // others are reserved by ROM code
-const uint32_t* const jump_table_base[256] __attribute__((section("jump_table_mem_area"))) =
+const uint32_t* const jump_table_base[256] __ATTR_SECTION_JUMP__ =
 {
     (const uint32_t*)0,                         // 0. write Log
     (const uint32_t*)osalInitTasks,             // 1. init entry of app
@@ -119,7 +118,7 @@ const uint32_t* const jump_table_base[256] __attribute__((section("jump_table_me
 /*********************************************************************
     EXTERNAL VARIABLES
 */
-uint32 global_config[SOFT_PARAMETER_NUM] __attribute__((section("global_config_area")));
+uint32 global_config[SOFT_PARAMETER_NUM] __ATTR_SECTION_CONFIG__;
 
 
 

@@ -272,7 +272,7 @@ int hal_flash_read(uint32_t addr, uint8_t* data, uint32_t size)
     uint32_t cs = spif_lock();
     volatile uint8_t* u8_spif_addr = (volatile uint8_t*)((addr & 0x7ffff) | FLASH_BASE_ADDR);
     uint32_t cb = AP_PCR->CACHE_BYPASS;
-    uint32_t remap;
+    uint32_t remap = 0;
 
     if(phy_flash.Capacity > 0x80000)
     {
@@ -292,7 +292,7 @@ int hal_flash_read(uint32_t addr, uint8_t* data, uint32_t size)
         HAL_CACHE_ENTER_BYPASS_SECTION();
     }
 
-    for(int i=0; i<size; i++)
+    for(size_t i=0; i<size; i++)
         data[i]=u8_spif_addr[i];
 
     //bypass cache

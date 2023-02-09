@@ -264,10 +264,11 @@ void hal_rom_boot_init(void)
 extern inline uint32_t __psr(void)
 {
     uint32_t i;
-    __asm
-    {
-        MRS i, psr
-    }
+#ifdef __GNUC__
+    __ASM volatile ("MRS %0, xpsr" : "=r" (i) );
+#else
+    __asm { MRS i, psr }
+#endif
     return i;
 }
 

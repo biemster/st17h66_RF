@@ -5,7 +5,17 @@ import base64
 jump_table = bytearray()
 irom1 = bytearray()
 
-with open('./bin/Lenze_rf.hex') as f:
+compiler = ['ARM','GCC'][1]
+if compiler == 'ARM':
+    infile = './bin/Lenze_rf.hex'
+    SZ = '1454'
+    print(f'Flashing firmware produced with Keil: {infile}')
+elif compiler == 'GCC':
+    infile = './build/Lenze_RF.hex'
+    SZ = '0858'
+    print(f'Flashing firmware produced with GCC: {infile}')
+
+with open(infile) as f:
     # hex file order is assumed to be ER_ROM_XIP - JUMP_TABLE - ER_IROM1
     sections = ['JUMP_TABLE','ER_IROM1']
     infiles = [jump_table,irom1]
@@ -22,24 +32,24 @@ with open('./bin/Lenze_rf.hex') as f:
 
 c0 = bytearray() # hexf header
 
-c0.extend(bytearray.fromhex('02000000FFFFFFFF3818FF1FFFFFFFFF')) # RF only code has only 2 ihex sections
-c0.extend(bytearray.fromhex('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
-c0.extend(bytearray.fromhex('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
-c0.extend(bytearray.fromhex('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
-c0.extend(bytearray.fromhex('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
-c0.extend(bytearray.fromhex('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
-c0.extend(bytearray.fromhex('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
-c0.extend(bytearray.fromhex('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
-c0.extend(bytearray.fromhex('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
-c0.extend(bytearray.fromhex('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
-c0.extend(bytearray.fromhex('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
-c0.extend(bytearray.fromhex('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
-c0.extend(bytearray.fromhex('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
-c0.extend(bytearray.fromhex('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
-c0.extend(bytearray.fromhex('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
-c0.extend(bytearray.fromhex('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
-c0.extend(bytearray.fromhex('00500000FFFF00000000FF1FFFFFFFFF'))
-c0.extend(bytearray.fromhex('14540000FFFF00003818FF1FFFFFFFFF'))
+c0.extend(bytearray.fromhex(f'02000000FFFFFFFF3818FF1FFFFFFFFF')) # RF only code has only 2 ihex sections
+c0.extend(bytearray.fromhex(f'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
+c0.extend(bytearray.fromhex(f'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
+c0.extend(bytearray.fromhex(f'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
+c0.extend(bytearray.fromhex(f'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
+c0.extend(bytearray.fromhex(f'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
+c0.extend(bytearray.fromhex(f'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
+c0.extend(bytearray.fromhex(f'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
+c0.extend(bytearray.fromhex(f'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
+c0.extend(bytearray.fromhex(f'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
+c0.extend(bytearray.fromhex(f'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
+c0.extend(bytearray.fromhex(f'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
+c0.extend(bytearray.fromhex(f'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
+c0.extend(bytearray.fromhex(f'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
+c0.extend(bytearray.fromhex(f'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
+c0.extend(bytearray.fromhex(f'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'))
+c0.extend(bytearray.fromhex(f'00500000FFFF00000000FF1FFFFFFFFF'))
+c0.extend(bytearray.fromhex(f'{SZ}0000FFFF00003818FF1FFFFFFFFF'))
 
 c0[-28:-26] = int.to_bytes(len(jump_table), 2, 'little') # length JUMP_TABLE
 c0[-12:-10] = int.to_bytes(len(irom1), 2, 'little') # length ER_IROM1

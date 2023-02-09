@@ -139,8 +139,8 @@ uint8 LenzePhy_TaskID; // Task ID for internal task/event processing
 //volatile uint32 phyWaitingIrq = FALSE;
 uint32 PHY_ISR_entry_time = 0;
 
-__align(4) uint8_t  phyBufRx[256];
-__align(4) uint8_t  phyBufTx[256];
+ALIGN4_U8  phyBufRx[256];
+ALIGN4_U8  phyBufTx[256];
 static uint8_t s_pubAddr[6];
 uint8_t adv_buffer[32];
 
@@ -154,6 +154,21 @@ static phyCtx_t s_phy;
 /*********************************************************************
     LOCAL FUNCTIONS
 */
+#define MSEC 32 // 32k RTCCounts is about a second (32kHz clock right?)
+#define SEC 32768
+void debug_blink(uint32_t nblink) {
+	gpio_pin_e pin = P3; // LED is on pin 3
+	hal_gpioretention_register(pin);
+	while(nblink--) {
+		hal_gpio_write(pin, 1);
+		WaitRTCCount(5*MSEC);
+		hal_gpio_write(pin, 0);
+		if(nblink) {
+			WaitRTCCount(45*MSEC);
+		}
+	}
+}
+
 static uint8_t phy_rx_data_check(void)
 {
     if(s_phy.Status==PHYPLUS_RFPHY_RX_TXACK)
@@ -363,6 +378,7 @@ void PLUSPHY_IRQHandler(void)
         ll_hw_clr_irq();                  // clear irq status
         return;
     }
+		debug_blink(1);
 
     llWaitingIrq = FALSE;
     HAL_ENTER_CRITICAL_SECTION();
@@ -514,7 +530,7 @@ void LenzePhy_Init(uint8 task_id)
     }
     //phy pktfmt config
     s_phy.Status        =   PHYPLUS_RFPHY_IDLE;
-    s_phy.txIntv        =   5000;//ms
+    s_phy.txIntv        =   500;//ms
     s_phy.rxIntv        =   200;//ms
     s_phy.rxAckTO       =   500;//us
     s_phy.rxOnlyTO      =   10*1000;//us
@@ -683,6 +699,7 @@ uint16 LenzePhy_ProcessEvent(uint8 task_id, uint16 events)
 */
 int app_main(void)
 {
+    debug_blink(2);
     /* Initialize the operating system */
     osal_init_system();
     osal_pwrmgr_device(PWRMGR_BATTERY);

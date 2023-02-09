@@ -18,7 +18,7 @@ typedef unsigned long   uint32;   //!< Unsigned 32 bit integer
 
 typedef uint8           halDataAlign_t; //!< Used for byte alignment
 
-#ifdef __GCC
+#ifdef __GNUC__
     #define ALIGN4_U8       _Alignas(4) uint8
     #define ALIGN4_U16      _Alignas(4) uint16
     #define ALIGN4_INT8     _Alignas(4) int8
@@ -152,8 +152,25 @@ typedef struct _comm_evt_t
 
 typedef void (*comm_cb_t)(comm_evt_t* pev);
 
-#define __ATTR_SECTION_SRAM__   __attribute__((section("_section_sram_code_")))
-#define __ATTR_SECTION_XIP__    __attribute__((section("_section_xip_code_")))
+#if __GNUC__
+    #define __ATTR_SECTION_JUMP__   __attribute__((section(".jump_table_mem_area")))
+    #define __ATTR_SECTION_CONFIG__    __attribute__((section(".global_config_area")))
+#else
+    #define __ATTR_SECTION_JUMP__   __attribute__((section("jump_table_mem_area")))
+    #define __ATTR_SECTION_CONFIG__    __attribute__((section("global_config_area")))
+#endif
+
+#define NO_SRAM_XIP_SECTIONS
+#ifdef NO_SRAM_XIP_SECTIONS
+    #define __ATTR_SECTION_SRAM__
+    #define __ATTR_SECTION_XIP__
+#elif __GNUC__
+	#define __ATTR_SECTION_SRAM__   __attribute__((section("._section_sram_code_")))
+	#define __ATTR_SECTION_XIP__    __attribute__((section("._section_xip_code_")))
+#else
+	#define __ATTR_SECTION_SRAM__   __attribute__((section("_section_sram_code_")))
+	#define __ATTR_SECTION_XIP__    __attribute__((section("_section_xip_code_")))
+#endif
 
 #endif
 

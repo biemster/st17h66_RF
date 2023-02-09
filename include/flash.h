@@ -125,7 +125,6 @@ extern void spif_cmd(uint8_t op, uint8_t addrlen, uint8_t rdlen, uint8_t wrlen, 
 extern void spif_rddata(uint8_t* data, uint8_t len);
 extern int spif_config(sysclk_t ref_clk, uint8_t div,  uint32_t rd_instr,  uint8_t mode_bit, uint8_t QE);
 int hal_spif_cache_init(xflash_Ctx_t cfg);
-static void hal_cache_tag_flush(void);
 #if(FLASH_PROTECT_FEATURE == 1)
     int hal_flash_lock(void);
     int hal_flash_unlock(void);

@@ -220,7 +220,7 @@ __ATTR_SECTION_XIP__  void hal_rfPhyFreqOff_Set(void)
     int32_t freqPpm=0;
     freqPpm= *(volatile int32_t*) 0x11004008;
 
-    if((freqPpm!=0xffffffff) && (freqPpm>=-50) && (freqPpm<=50))
+    if((freqPpm!=(int32_t)0xffffffff) && (freqPpm>=-50) && (freqPpm<=50))
     {
         g_rfPhyFreqOffSet=(int8_t)freqPpm;
     }
